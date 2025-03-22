@@ -7,5 +7,5 @@ import de.marik.apigateway.models.Expenses;
 
 @Repository
 public interface ExpensesRepository extends JpaRepository<Expenses, Integer>{
-
+	
 }
