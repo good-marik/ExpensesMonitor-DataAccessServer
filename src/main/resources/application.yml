@@ -1,0 +1,28 @@
+spring:
+  application:
+   name: APIGateway
+ 
+#Data source configuration
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+
+#Hibernate configuration
+  jpa:
+    properties:
+      hibernate.show_sql: true
+#spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.PostgreSQLDialect
+
+#filter for PUT/PATCH/DELETE methods
+  mvc:
+    hiddenmethod:
+      filter:
+         enabled: true
+
+#debugging here
+temp:
+    username: ${TEMP_USERNAME}
+    password: ${TEMP_PASSWORD}
+    
