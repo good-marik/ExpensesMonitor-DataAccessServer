@@ -42,7 +42,7 @@ public class DataAccessController {
 		Person person = personService.getPersonByUsername("marik").get();
 		Random random = new Random();
 		Expenses expenses = new Expenses(random.nextDouble(100), "new expenses N" + random.nextInt(1000), person);
-		expensesService.add(expenses);
+		expensesService.save(expenses);
 		return "The expenses was added";
 	}
 }

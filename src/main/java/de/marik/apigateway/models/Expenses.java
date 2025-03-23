@@ -2,6 +2,8 @@ package de.marik.apigateway.models;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -31,6 +33,7 @@ public class Expenses {
 	@Size(max = 250, message = "Too long comment!")
 	private String comment;
 
+	@JsonBackReference	// to prevent looping
 	@ManyToOne
 	@JoinColumn(name = "owner", referencedColumnName = "id")
 	private Person owner;
@@ -94,9 +97,11 @@ public class Expenses {
 		this.owner = owner;
 	}
 
+
 	@Override
 	public String toString() {
-		return "Expenses [id=" + id + ", amount=" + amount + ", date=" + date + ", comment=" + comment + "]";
+		return "Expenses [id=" + id + ", amount=" + amount + ", date=" + date + ", comment=" + comment + ", owner="
+				+ owner + "]";
 	}
 
 }

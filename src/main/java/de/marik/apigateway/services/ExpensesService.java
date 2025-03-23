@@ -14,6 +14,7 @@ import de.marik.apigateway.repositories.ExpensesRepository;
 import de.marik.apigateway.repositories.PersonRepository;
 
 @Service
+@Transactional(readOnly = true)
 public class ExpensesService {
 
 	private final ExpensesRepository expensesRepository;
@@ -30,9 +31,13 @@ public class ExpensesService {
 	}
 
 	@Transactional
-	public void add(Expenses expenses) {
+	public void save(Expenses expenses) {
+		//debugging
+		expenses.setOwner(personRepository.getReferenceById(1));
+		System.out.println("saving entry in DB...");
+		System.out.println(expenses.toString());
 		expensesRepository.save(expenses);
-
+		System.out.println("saved successfully in DB!");
 	}
 
 	public List<Expenses> getExpensesByOwnerID(int id) {
@@ -41,8 +46,8 @@ public class ExpensesService {
 			System.out.println("Person not found ERROR!");
 			return Collections.emptyList();
 		} else {
-//			Hibernate.initialize(person.getBooks());
-			System.out.println("Person: " + person.get().getUsername());
+//			Hibernate.initialize(person.getBooks()); // optional
+			//System.out.println("Person: " + person.get().getUsername());
 			return person.get().getExpenses();
 		}
 	}
