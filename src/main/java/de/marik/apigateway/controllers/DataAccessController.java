@@ -37,12 +37,13 @@ public class DataAccessController {
 		return expensesService.getAllExpenses().toString();
 	}
 
-	@GetMapping("/putitem")
-	public String addNewExpensesTest() {
-		Person person = personService.getPersonByUsername("marik").get();
-		Random random = new Random();
-		Expenses expenses = new Expenses(random.nextDouble(100), "new expenses N" + random.nextInt(1000), person);
-		expensesService.save(expenses);
-		return "The expenses was added";
-	}
+	//for testing only
+//	@GetMapping("/putitem")
+//	public String addNewExpensesTest() {
+//		Person person = personService.getPersonByUsername("marik").get();
+//		Random random = new Random();
+//		Expenses expenses = new Expenses(random.nextDouble(100), "new expenses N" + random.nextInt(1000), person);
+//		expensesService.save(expenses);
+//		return "The expenses was added";
+//	}
 }

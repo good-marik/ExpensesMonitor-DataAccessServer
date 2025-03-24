@@ -11,26 +11,18 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
-import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Size;
 
 @Entity
 @Table(name = "Expenses")
 public class Expenses {
-
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@DecimalMin(value = "0.0", message = "positive numbers only!") //is constrain working?
 	private double amount; // or replace with Double?
 
-	@Temporal(TemporalType.DATE)
 	private LocalDate date;
 
-	@Size(max = 250, message = "Too long comment!")
 	private String comment;
 
 	@JsonBackReference	// to prevent looping
@@ -38,24 +30,17 @@ public class Expenses {
 	@JoinColumn(name = "owner", referencedColumnName = "id")
 	private Person owner;
 	
-	
-	
-//	public Expenses(double amount, String comment) {
-//		this.amount = amount;
-//		this.comment = comment;
-//	}
-
 	public Expenses() {
 	}
 
-
-	public Expenses(double amount, String comment, Person owner) {
-		this.amount = amount;
-		this.comment = comment;
-		this.owner = owner;
-		this.date = LocalDate.now();
-	}
-
+	
+	//for testing only
+//	public Expenses(double amount, String comment, Person owner) {
+//		this.amount = amount;
+//		this.comment = comment;
+//		this.owner = owner;
+//		this.date = LocalDate.now();
+//	}
 
 	public int getId() {
 		return id;
@@ -96,7 +81,6 @@ public class Expenses {
 	public void setOwner(Person owner) {
 		this.owner = owner;
 	}
-
 
 	@Override
 	public String toString() {

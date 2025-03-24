@@ -2,6 +2,7 @@ package de.marik.apigateway.controllers;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import de.marik.apigateway.dto.ExpensesDTO;
 import de.marik.apigateway.models.Expenses;
 import de.marik.apigateway.models.Person;
 import de.marik.apigateway.services.ExpensesService;
@@ -49,12 +51,15 @@ public class RestAPIController {
 	}
 
 	@PostMapping("/addExpenses")
-	public ResponseEntity<HttpStatus> addExpenses(@RequestBody @Valid Expenses expenses, BindingResult bindingResult) {
+	public ResponseEntity<HttpStatus> addExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
+			BindingResult bindingResult) {
+		
+		//TODO: to validate ownewID here
 		if (bindingResult.hasErrors()) {
 			String errorMessage = buildErrorMessage(bindingResult);
 			throw new ExpensesNotCreatedException(errorMessage);
 		}
-		expensesService.save(expenses);
+		expensesService.saveExpenses(expensesDTO);
 		return ResponseEntity.ok(HttpStatus.OK); // status 200
 	}
 
@@ -66,11 +71,11 @@ public class RestAPIController {
 		}
 		return sb.toString();
 	}
-	
+
 	@ExceptionHandler
 	private ResponseEntity<ExpensesErrorResponse> handleException(ExpensesNotCreatedException e) {
 		ExpensesErrorResponse response = new ExpensesErrorResponse(e.getMessage());
-		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);	// 4xx error
+		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // 4xx error
 	}
 
 }
