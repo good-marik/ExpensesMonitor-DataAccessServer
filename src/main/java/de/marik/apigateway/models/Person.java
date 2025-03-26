@@ -3,7 +3,6 @@ package de.marik.apigateway.models;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,12 +21,9 @@ public class Person {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-//	@NotBlank(message = "Username should not be empty")
 	@Size(min = 1, max = 100, message = "Username should be between 1 and 100 symbols long")
 	private String username;
 
-	// TODO: validation for a plain password here
-	//@NotBlank(message = "Password should not be empty")
 	@Size(min = 4, max = 100, message = "Password should be at least 4 symbols long")
 	private String password;
 	
@@ -36,22 +32,11 @@ public class Person {
 	
 	@OneToMany(mappedBy = "owner")
 	//@JsonManagedReference	// to prevent looping
-	@JsonBackReference
+	@JsonBackReference	// to prevent looping
 	private List<Expenses> expenses;
-	
-	public Person(String username, String password) {
-		this.username = username;
-		this.password = password;
-	}
 
-	// is really needed for Spring?
 	public Person() {
 	}
-
-	// for testing ONLY. Should be deleted afterwards!
-//	public Person(String username) {
-//		this.username = username;
-//	}
 
 	public int getId() {
 		return id;
@@ -97,6 +82,4 @@ public class Person {
 	public String toString() {
 		return "Person [id=" + id + ", username=" + username + "]";
 	}
-	
-	
 }

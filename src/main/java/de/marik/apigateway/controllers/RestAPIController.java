@@ -2,7 +2,6 @@ package de.marik.apigateway.controllers;
 
 import java.util.List;
 
-import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,10 +16,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.marik.apigateway.dto.ExpensesDTO;
-import de.marik.apigateway.models.Expenses;
-import de.marik.apigateway.models.Person;
 import de.marik.apigateway.services.ExpensesService;
-import de.marik.apigateway.services.PersonService;
+import de.marik.apigateway.util.ExpensesDTOValidator;
 import de.marik.apigateway.util.ExpensesErrorResponse;
 import de.marik.apigateway.util.ExpensesNotCreatedException;
 import jakarta.validation.Valid;
@@ -28,33 +25,30 @@ import jakarta.validation.Valid;
 @RequestMapping("/api")
 @RestController
 public class RestAPIController {
-
 	private final ExpensesService expensesService;
-	private final PersonService personService;
+	private final ExpensesDTOValidator expensesDTOValidator;
 
 	@Autowired
-	public RestAPIController(ExpensesService expensesService, PersonService personService) {
+	public RestAPIController(ExpensesService expensesService, ExpensesDTOValidator expensesDTOValidator) {
 		this.expensesService = expensesService;
-		this.personService = personService;
+		this.expensesDTOValidator = expensesDTOValidator;
 	}
+
+//  for testing ONLY
+//	@GetMapping("/getPeople")
+//	public List<Person> getPeople() {
+//		return personService.getAllPeople();
+//	}
 
 	@GetMapping("/getExpenses")
-	public List<Expenses> getExpenses(@RequestParam(value = "id") int id) {
-		// to check for correct id here? not necessary
+	public List<ExpensesDTO> getExpenses(@RequestParam(value = "id") int id) {
 		return expensesService.getExpensesByOwnerID(id);
-	}
-
-	// for testing ONLY
-	@GetMapping("/getPeople")
-	public List<Person> getPeople() {
-		return personService.getAllPeople();
 	}
 
 	@PostMapping("/addExpenses")
 	public ResponseEntity<HttpStatus> addExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
 			BindingResult bindingResult) {
-		
-		//TODO: to validate ownewID here
+		expensesDTOValidator.validate(expensesDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
 			String errorMessage = buildErrorMessage(bindingResult);
 			throw new ExpensesNotCreatedException(errorMessage);

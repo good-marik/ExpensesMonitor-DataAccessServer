@@ -1,6 +1,6 @@
 package de.marik.apigateway.util;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 public class ExpensesErrorResponse {
 	private String message;
@@ -8,7 +8,7 @@ public class ExpensesErrorResponse {
 
 	public ExpensesErrorResponse(String message) {
 		this.message = message;
-		this.timestamp = LocalDate.now().toString();
+		this.timestamp = LocalDateTime.now().toString();
 	}
 
 	public String getMessage() {

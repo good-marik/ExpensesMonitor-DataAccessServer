@@ -1,5 +1,8 @@
 package de.marik.apigateway.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -18,7 +21,6 @@ import de.marik.apigateway.repositories.PersonRepository;
 @Service
 @Transactional(readOnly = true)
 public class ExpensesService {
-
 	private final ExpensesRepository expensesRepository;
 	private final PersonRepository personRepository;
 	private final ModelMapper modelMapper;
@@ -31,41 +33,43 @@ public class ExpensesService {
 		this.modelMapper = modelMapper;
 	}
 
-	public List<Expenses> getAllExpenses() {
-		return expensesRepository.findAll();
-	}
+//	public List<Expenses> getAllExpenses() {
+//		return expensesRepository.findAll();
+//	}
 
 	@Transactional
 	public void saveExpenses(ExpensesDTO expensesDTO) {
-//		System.out.println("ExpensesDTO:");
-//		System.out.println(expensesDTO);
-		Expenses expenses = modelMapper.map(expensesDTO, Expenses.class);
-		Optional<Person> person = personRepository.findById(expensesDTO.getOwnerIdentity());
-//		System.out.println("Person:");
-//		System.out.println(person);
-//		System.out.println("Expenses:");
-//		System.out.println(expenses);
-		if(person.isEmpty()) {
-			//debugging HERE, this must be checked in controller
-			System.out.println("error in writing in DB");
-			return;
-		}
-		expenses.setOwner(person.get());
-//		System.out.println("saving entry in DB...");
-//		System.out.println(expenses);
+		Expenses expenses = convertToExpenses(expensesDTO);
+		Person person = personRepository.findById(expensesDTO.getOwnerIdentity()).get();
+		expenses.setOwner(person);
+		expenses.setAmount(roundToTwoDecimals(expenses.getAmount()));
 		expensesRepository.save(expenses);
-//		System.out.println("saved successfully in DB!");
 	}
 
-	public List<Expenses> getExpensesByOwnerID(int id) {
+	public List<ExpensesDTO> getExpensesByOwnerID(int id) {
 		Optional<Person> person = personRepository.findById(id);
-		if (person.isEmpty()) {
-			System.out.println("Person not found ERROR!");
+		if (person.isEmpty())
 			return Collections.emptyList();
-		} else {
-//			Hibernate.initialize(person.getBooks()); // optional
-			//System.out.println("Person: " + person.get().getUsername());
-			return person.get().getExpenses();
+
+		int ownerIdentity = person.get().getId();
+		List<ExpensesDTO> expensesDTO = new ArrayList<ExpensesDTO>();
+		for (Expenses e : person.get().getExpenses()) {
+			ExpensesDTO eDTO = convertToExpensesDTO(e);
+			eDTO.setOwnerIdentity(ownerIdentity);
+			expensesDTO.add(eDTO);
 		}
+		return expensesDTO;
+	}
+
+	private Expenses convertToExpenses(ExpensesDTO expensesDTO) {
+		return modelMapper.map(expensesDTO, Expenses.class);
+	}
+
+	private ExpensesDTO convertToExpensesDTO(Expenses expenses) {
+		return modelMapper.map(expenses, ExpensesDTO.class);
+	}
+	
+	private double roundToTwoDecimals(double amount) {
+		return new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
 }

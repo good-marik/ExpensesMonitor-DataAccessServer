@@ -2,8 +2,6 @@ package de.marik.apigateway.models;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,7 +23,7 @@ public class Expenses {
 
 	private String comment;
 
-	@JsonBackReference	// to prevent looping
+	//@JsonBackReference	// to prevent looping
 	@ManyToOne
 	@JoinColumn(name = "owner", referencedColumnName = "id")
 	private Person owner;
@@ -33,7 +31,6 @@ public class Expenses {
 	public Expenses() {
 	}
 
-	
 	//for testing only
 //	public Expenses(double amount, String comment, Person owner) {
 //		this.amount = amount;

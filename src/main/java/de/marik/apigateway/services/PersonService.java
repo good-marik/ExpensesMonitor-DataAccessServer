@@ -1,6 +1,5 @@
 package de.marik.apigateway.services;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +23,14 @@ public class PersonService {
 	public Optional<Person> getPersonByUsername(String username) {
 		return personRepository.findByUsername(username);
 	}
+	
+	public Optional<Person> getPersonById(int id) {
+		return personRepository.findById(id);
+	}
 
 	//for tests only
-	public List<Person> getAllPeople() {
-		return personRepository.findAll();
-	}
+//	public List<Person> getAllPeople() {
+//		return personRepository.findAll();
+//	}
 
 }

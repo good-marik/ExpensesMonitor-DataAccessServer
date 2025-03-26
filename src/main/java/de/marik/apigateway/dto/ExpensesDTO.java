@@ -5,7 +5,6 @@ import java.time.LocalDate;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.DecimalMin;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Size;
 
 public class ExpensesDTO {
@@ -19,7 +18,6 @@ public class ExpensesDTO {
 	@Size(max = 250, message = "too long comment!")
 	private String comment;
 
-	//@Min(value = 0, message = "unknown user!")
 	private int ownerIdentity;
 	
 	public ExpensesDTO() {
@@ -49,8 +47,6 @@ public class ExpensesDTO {
 		this.comment = comment;
 	}
 
-	
-	
 	public int getOwnerIdentity() {
 		return ownerIdentity;
 	}
@@ -64,7 +60,4 @@ public class ExpensesDTO {
 		return "ExpensesDTO [amount=" + amount + ", date=" + date + ", comment=" + comment + ", ownerIdentity="
 				+ ownerIdentity + "]";
 	}
-	
-
-	
 }
