@@ -1,6 +1,7 @@
 package de.marik.dataserver.controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import de.marik.dataserver.dto.ExpensesDTO;
+import de.marik.dataserver.dto.ExpensesList;
 import de.marik.dataserver.services.ExpensesService;
 import de.marik.dataserver.utils.ExpensesDTOValidator;
 import de.marik.dataserver.utils.ExpensesErrorResponse;
@@ -25,16 +27,16 @@ import jakarta.validation.Valid;
 
 @RequestMapping("/api")
 @RestController
-public class RestAPIController {
-	
+public class DataServerRestAPIController {
+
 	@Value("${spring.datasource.url}")
 	private String testVariable;
-	
+
 	private final ExpensesService expensesService;
 	private final ExpensesDTOValidator expensesDTOValidator;
 
 	@Autowired
-	public RestAPIController(ExpensesService expensesService, ExpensesDTOValidator expensesDTOValidator) {
+	public DataServerRestAPIController(ExpensesService expensesService, ExpensesDTOValidator expensesDTOValidator) {
 		this.expensesService = expensesService;
 		this.expensesDTOValidator = expensesDTOValidator;
 	}
@@ -46,10 +48,11 @@ public class RestAPIController {
 //	}
 
 	@GetMapping("/getExpenses")
-	public List<ExpensesDTO> getExpenses(@RequestParam(value = "id") int id) {
-		System.out.println("in getExpense now!");
+	public ExpensesList getExpenses(@RequestParam(value = "id") int id) {
+		//debugging
+		System.out.println("-------------------------------------------------");
 		System.out.println("Variable: " + testVariable);
-		return expensesService.getExpensesByOwnerID(id);
+		return new ExpensesList(expensesService.getExpensesByOwnerID(id).stream().collect(Collectors.toList()));
 	}
 
 	@PostMapping("/addExpenses")

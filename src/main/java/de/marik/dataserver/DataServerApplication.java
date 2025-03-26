@@ -9,20 +9,11 @@ import org.springframework.context.annotation.Bean;
 import de.marik.dataserver.utils.DatabaseEnvChecker;
 
 @SpringBootApplication
-public class APIDataServerApplication {
-//	@Value("${spring.datasource.url}")
-//	String testVariable;
-
+public class DataServerApplication {
 	public static void main(String[] args) {
-//		
-//		System.out.println("---STARTING SPRING HERE!---");
-//		System.out.println("EnvVariable: "+ testVariable);
-//		
-		ApplicationContext context = SpringApplication.run(APIDataServerApplication.class, args);
-		
+		System.out.println("Starting DataServer......");
+		ApplicationContext context = SpringApplication.run(DataServerApplication.class, args);
 		context.getBean(DatabaseEnvChecker.class).validateDatabaseEnv();
-
-		
 	}
 
 	// ModelMapper for fast Model <-> DTO conversion
