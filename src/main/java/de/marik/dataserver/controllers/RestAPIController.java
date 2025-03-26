@@ -3,6 +3,7 @@ package de.marik.dataserver.controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -25,6 +26,10 @@ import jakarta.validation.Valid;
 @RequestMapping("/api")
 @RestController
 public class RestAPIController {
+	
+	@Value("${spring.datasource.url}")
+	private String testVariable;
+	
 	private final ExpensesService expensesService;
 	private final ExpensesDTOValidator expensesDTOValidator;
 
@@ -42,6 +47,8 @@ public class RestAPIController {
 
 	@GetMapping("/getExpenses")
 	public List<ExpensesDTO> getExpenses(@RequestParam(value = "id") int id) {
+		System.out.println("in getExpense now!");
+		System.out.println("Variable: " + testVariable);
 		return expensesService.getExpensesByOwnerID(id);
 	}
 
