@@ -1,4 +1,4 @@
-package de.marik.apigateway.models;
+package de.marik.dataserver.models;
 
 import java.util.List;
 

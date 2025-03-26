@@ -1,9 +1,9 @@
-package de.marik.apigateway.controllers;
+package de.marik.dataserver.controllers;
 
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class DataAccessController {
+public class TestController {
 
 	// for tesing
 //	@GetMapping("/hello")

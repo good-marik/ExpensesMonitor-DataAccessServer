@@ -1,4 +1,4 @@
-package de.marik.apigateway.util;
+package de.marik.dataserver.utils;
 
 import java.time.LocalDateTime;
 

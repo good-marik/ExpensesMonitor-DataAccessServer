@@ -1,11 +1,11 @@
-package de.marik.apigateway.repositories;
+package de.marik.dataserver.repositories;
 
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import de.marik.apigateway.models.Person;
+import de.marik.dataserver.models.Person;
 
 @Repository
 public interface PersonRepository extends JpaRepository<Person, Integer> {

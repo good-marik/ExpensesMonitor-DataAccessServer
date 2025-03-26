@@ -1,4 +1,4 @@
-package de.marik.apigateway.controllers;
+package de.marik.dataserver.controllers;
 
 import java.util.List;
 
@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import de.marik.apigateway.dto.ExpensesDTO;
-import de.marik.apigateway.services.ExpensesService;
-import de.marik.apigateway.util.ExpensesDTOValidator;
-import de.marik.apigateway.util.ExpensesErrorResponse;
-import de.marik.apigateway.util.ExpensesNotCreatedException;
+import de.marik.dataserver.dto.ExpensesDTO;
+import de.marik.dataserver.services.ExpensesService;
+import de.marik.dataserver.utils.ExpensesDTOValidator;
+import de.marik.dataserver.utils.ExpensesErrorResponse;
+import de.marik.dataserver.utils.ExpensesNotCreatedException;
 import jakarta.validation.Valid;
 
 @RequestMapping("/api")

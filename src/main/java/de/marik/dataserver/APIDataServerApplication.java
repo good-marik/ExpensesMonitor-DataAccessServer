@@ -1,4 +1,4 @@
-package de.marik.apigateway;
+package de.marik.dataserver;
 
 import org.modelmapper.ModelMapper;
 import org.springframework.boot.SpringApplication;
@@ -6,15 +6,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @SpringBootApplication
-public class DataAccessServerApplication {
+public class APIDataServerApplication {
 
 	public static void main(String[] args) {
-		SpringApplication.run(DataAccessServerApplication.class, args);
+		SpringApplication.run(APIDataServerApplication.class, args);
 	}
-	
-	//ModelMapper for fast Model <-> DTO conversion
+
+	// ModelMapper for fast Model <-> DTO conversion
 	@Bean
-	public ModelMapper modelMapper(){
+	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
 

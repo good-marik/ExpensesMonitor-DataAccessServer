@@ -1,4 +1,4 @@
-package de.marik.apigateway.dto;
+package de.marik.dataserver.dto;
 
 import java.time.LocalDate;
 
@@ -9,7 +9,7 @@ import jakarta.validation.constraints.Size;
 
 public class ExpensesDTO {
 
-	@DecimalMin(value = "0.0", message = "positive numbers only!") //is constrain working?
+	@DecimalMin(value = "0.0", message = "expenses should be a positive number")
 	private double amount; // or replace with Double?
 
 	@Temporal(TemporalType.DATE)

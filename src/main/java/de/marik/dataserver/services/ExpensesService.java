@@ -1,4 +1,4 @@
-package de.marik.apigateway.services;
+package de.marik.dataserver.services;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -12,11 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import de.marik.apigateway.dto.ExpensesDTO;
-import de.marik.apigateway.models.Expenses;
-import de.marik.apigateway.models.Person;
-import de.marik.apigateway.repositories.ExpensesRepository;
-import de.marik.apigateway.repositories.PersonRepository;
+import de.marik.dataserver.dto.ExpensesDTO;
+import de.marik.dataserver.models.Expenses;
+import de.marik.dataserver.models.Person;
+import de.marik.dataserver.repositories.ExpensesRepository;
+import de.marik.dataserver.repositories.PersonRepository;
 
 @Service
 @Transactional(readOnly = true)
