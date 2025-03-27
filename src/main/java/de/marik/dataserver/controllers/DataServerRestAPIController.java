@@ -3,7 +3,6 @@ package de.marik.dataserver.controllers;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,7 +34,6 @@ public class DataServerRestAPIController {
 	private final ExpensesService expensesService;
 	private final ExpensesDTOValidator expensesDTOValidator;
 
-	@Autowired
 	public DataServerRestAPIController(ExpensesService expensesService, ExpensesDTOValidator expensesDTOValidator) {
 		this.expensesService = expensesService;
 		this.expensesDTOValidator = expensesDTOValidator;
@@ -48,7 +46,7 @@ public class DataServerRestAPIController {
 //	}
 
 	@GetMapping("/getExpenses")
-	public ExpensesList getExpenses(@RequestParam(value = "id") int id) {
+	public ExpensesList getExpenses(@RequestParam int id) {
 		//debugging
 		System.out.println("-------------------------------------------------");
 		System.out.println("Variable: " + testVariable);
