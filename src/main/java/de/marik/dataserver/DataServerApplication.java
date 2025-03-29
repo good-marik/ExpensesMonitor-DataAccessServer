@@ -13,7 +13,6 @@ public class DataServerApplication {
 	public static void main(String[] args) {
 		System.out.println("Starting DataServer......");
 		ApplicationContext context = SpringApplication.run(DataServerApplication.class, args);
-		context.getBean(DatabaseEnvChecker.class).validateDatabaseEnv();
 	}
 
 	// ModelMapper for fast Model <-> DTO conversion
@@ -21,5 +20,4 @@ public class DataServerApplication {
 	public ModelMapper modelMapper() {
 		return new ModelMapper();
 	}
-
 }

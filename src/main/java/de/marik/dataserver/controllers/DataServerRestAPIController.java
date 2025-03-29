@@ -8,8 +8,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,7 +23,7 @@ import de.marik.dataserver.dto.ExpensesList;
 import de.marik.dataserver.services.ExpensesService;
 import de.marik.dataserver.utils.ExpensesDTOValidator;
 import de.marik.dataserver.utils.ExpensesErrorResponse;
-import de.marik.dataserver.utils.ExpensesNotCreatedException;
+import de.marik.dataserver.utils.ExpensesException;
 import jakarta.validation.Valid;
 
 @RequestMapping("/api")
@@ -44,22 +46,45 @@ public class DataServerRestAPIController {
 //	public List<Person> getPeople() {
 //		return personService.getAllPeople();
 //	}
+	
+	@PostMapping("/updateExpenses")
+	public void updateExpenses(@RequestBody @Valid ExpensesDTO expensesDTO, BindingResult bindingResult) {
+		
+		//dublicating addExpenses() - not good
+		expensesDTOValidator.validate(expensesDTO, bindingResult);
+		if(bindingResult.hasErrors()) {
+			String errorMessage = buildErrorMessage(bindingResult);
+			throw new ExpensesException(errorMessage);
+		}
+		expensesService.update(expensesDTO);
+	}
+	
 
+	@DeleteMapping("/deleteExpenses")
+	//return a proper JSON later?
+	public void deleteExpenses(@RequestParam int id) {
+		expensesService.delete(id);
+	}
+	
 	@GetMapping("/getExpenses")
 	public ExpensesList getExpenses(@RequestParam int id) {
-		//debugging
-		System.out.println("-------------------------------------------------");
-		System.out.println("Variable: " + testVariable);
 		return new ExpensesList(expensesService.getExpensesByOwnerID(id).stream().collect(Collectors.toList()));
+	}
+	
+	@GetMapping("/getExpensesById")
+	public ExpensesDTO getExpensesById(@RequestParam int id) {
+		return expensesService.getExpensesById(id);
 	}
 
 	@PostMapping("/addExpenses")
 	public ResponseEntity<HttpStatus> addExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
 			BindingResult bindingResult) {
+		//TODO: work on return type!
+		
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
 			String errorMessage = buildErrorMessage(bindingResult);
-			throw new ExpensesNotCreatedException(errorMessage);
+			throw new ExpensesException(errorMessage);
 		}
 		expensesService.saveExpenses(expensesDTO);
 		return ResponseEntity.ok(HttpStatus.OK); // status 200
@@ -75,7 +100,7 @@ public class DataServerRestAPIController {
 	}
 
 	@ExceptionHandler
-	private ResponseEntity<ExpensesErrorResponse> handleException(ExpensesNotCreatedException e) {
+	private ResponseEntity<ExpensesErrorResponse> handleException(ExpensesException e) {
 		ExpensesErrorResponse response = new ExpensesErrorResponse(e.getMessage());
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST); // 4xx error
 	}
