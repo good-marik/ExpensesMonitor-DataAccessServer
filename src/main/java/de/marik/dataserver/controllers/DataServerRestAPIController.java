@@ -2,9 +2,7 @@ package de.marik.dataserver.controllers;
 
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -30,9 +28,6 @@ import jakarta.validation.Valid;
 @RestController
 public class DataServerRestAPIController {
 
-	@Value("${spring.datasource.url}")
-	private String testVariable;
-
 	private final ExpensesService expensesService;
 	private final ExpensesDTOValidator expensesDTOValidator;
 
@@ -43,38 +38,36 @@ public class DataServerRestAPIController {
 
 	@GetMapping("/expenses")
 	public ResponseEntity<Object> getExpenses(@RequestParam int ownerId) {
-		if(ownerId <= 0) return ResponseEntity.badRequest().body(Map.of("error", "Invalid ownerId"));
+		if (ownerId <= 0)
+			return ResponseEntity.badRequest().body(Map.of("error", "Invalid ownerId "));
 		ExpensesList expensesList = expensesService.getExpensesByOwnerID(ownerId);
 		return ResponseEntity.ok(expensesList);
 	}
+
+	@DeleteMapping("/delete")
+	public ResponseEntity<String> deleteExpensesNew(@RequestParam int id) {
+		try {
+			expensesService.deleteExpenses(id);
+			return ResponseEntity.ok("Expenses has been deleted succesfully.");
+		} catch (RuntimeException e) {
+			return ResponseEntity.badRequest().body("Invalid expenses id ");
+		}
+	}
 	
-//	@GetMapping("/getExpenses")
-//	public ExpensesList getExpensesOLD(@RequestParam int id) {
-//		return new ExpensesList(expensesService.getExpensesByOwnerID(id).stream().collect(Collectors.toList()));
-//	}
 	
-	
-	
+
 	@PostMapping("/updateExpenses")
 	public void updateExpenses(@RequestBody @Valid ExpensesDTO expensesDTO, BindingResult bindingResult) {
-		
-		//dublicating addExpenses() - not good
+
+		// dublicating addExpenses() - not good
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
-		if(bindingResult.hasErrors()) {
+		if (bindingResult.hasErrors()) {
 			String errorMessage = buildErrorMessage(bindingResult);
 			throw new ExpensesException(errorMessage);
 		}
 		expensesService.update(expensesDTO);
 	}
-	
 
-	@DeleteMapping("/deleteExpenses")
-	//return a proper JSON later?
-	public void deleteExpenses(@RequestParam int id) {
-		expensesService.delete(id);
-	}
-	
-	
 	@GetMapping("/getExpensesById")
 	public ExpensesDTO getExpensesById(@RequestParam int id) {
 		return expensesService.getExpensesById(id);
@@ -83,8 +76,8 @@ public class DataServerRestAPIController {
 	@PostMapping("/addExpenses")
 	public ResponseEntity<HttpStatus> addExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
 			BindingResult bindingResult) {
-		//TODO: work on return type!
-		
+		// TODO: work on return type!
+
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
 		if (bindingResult.hasErrors()) {
 			String errorMessage = buildErrorMessage(bindingResult);

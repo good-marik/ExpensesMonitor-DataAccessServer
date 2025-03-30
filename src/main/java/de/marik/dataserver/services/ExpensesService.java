@@ -27,7 +27,6 @@ public class ExpensesService {
 	private final PersonRepository personRepository;
 	private final ModelMapper modelMapper;
 
-	@Autowired
 	public ExpensesService(ExpensesRepository expensesRepository, PersonRepository personRepository,
 			ModelMapper modelMapper) {
 		this.expensesRepository = expensesRepository;
@@ -35,14 +34,11 @@ public class ExpensesService {
 		this.modelMapper = modelMapper;
 	}
 
-//	public List<Expenses> getAllExpenses() {
-//		return expensesRepository.findAll();
-//	}
-
 	public ExpensesList getExpensesByOwnerID(int id) {
 		Optional<Person> person = personRepository.findById(id);
 		if (person.isEmpty())
 			return new ExpensesList(Collections.emptyList());
+
 		int ownerIdentity = person.get().getId();
 		List<ExpensesDTO> expensesDTO = new ArrayList<ExpensesDTO>();
 		for (Expenses e : person.get().getExpenses()) {
@@ -52,6 +48,20 @@ public class ExpensesService {
 		}
 		return new ExpensesList(expensesDTO);
 	}
+
+	@Transactional
+	public void deleteExpenses(int id) {
+		if (expensesRepository.existsById(id))
+			expensesRepository.deleteById(id);
+		else
+			throw new RuntimeException("No Expenses with id=" + " was found");
+	}
+
+//	@Transactional
+//	public void delete(int id) {
+//		expensesRepository.deleteById(id);
+//		System.out.println("Successfully deleted: " + id);
+//	}
 
 	@Transactional
 	public void saveExpenses(ExpensesDTO expensesDTO) {
@@ -66,42 +76,35 @@ public class ExpensesService {
 	public void update(ExpensesDTO expensesDTO) {
 		Expenses expenses = convertToExpenses(expensesDTO);
 		Optional<Expenses> expensesOptional = expensesRepository.findById(expenses.getId());
-		if (expensesOptional.isEmpty()) 
-			return;	// TODO: return a proper Response here!
+		if (expensesOptional.isEmpty())
+			return; // TODO: return a proper Response here!
 		Expenses expensesToBeUpdated = expensesOptional.get();
 		expensesToBeUpdated.setAmount(expenses.getAmount());
 		expensesToBeUpdated.setDate(expenses.getDate());
 		expensesToBeUpdated.setComment(expenses.getComment());
 //		expensesToBeUpdated.setOwner(expenses.getOwner());
 		expensesRepository.save(expensesToBeUpdated);
-		//TODO: return a proper Response here!
-		//return null;
+		// TODO: return a proper Response here!
+		// return null;
 	}
-	
-	
-	@Transactional
-	public void delete(int id) {
-		expensesRepository.deleteById(id);
-		System.out.println("Successfully deleted: " + id);
-	}
-	
+
 	public ExpensesDTO getExpensesById(int id) {
 		Optional<Expenses> expenses = expensesRepository.findById(id);
 		if (expenses.isEmpty())
 			return null; // TODO: return a proper Response here!
 		ExpensesDTO expensesDTO = convertToExpensesDTO(expenses.get());
-		expensesDTO.setOwnerIdentity(expenses.get().getOwner().getId());	//TODO: refractoring here, move to the method?
+		expensesDTO.setOwnerIdentity(expenses.get().getOwner().getId()); // TODO: refractoring here, move to the method?
 		return expensesDTO;
 	}
-	
+
 	private Expenses convertToExpenses(ExpensesDTO expensesDTO) {
 		return modelMapper.map(expensesDTO, Expenses.class);
 	}
-	
+
 	private ExpensesDTO convertToExpensesDTO(Expenses expenses) {
 		return modelMapper.map(expenses, ExpensesDTO.class);
 	}
-	
+
 	private double roundToTwoDecimals(double amount) {
 		return new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
