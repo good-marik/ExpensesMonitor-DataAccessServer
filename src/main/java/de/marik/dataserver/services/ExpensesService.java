@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import de.marik.dataserver.dto.ExpensesDTO;
+import de.marik.dataserver.dto.ExpensesList;
 import de.marik.dataserver.models.Expenses;
 import de.marik.dataserver.models.Person;
 import de.marik.dataserver.repositories.ExpensesRepository;
@@ -38,10 +39,10 @@ public class ExpensesService {
 //		return expensesRepository.findAll();
 //	}
 
-	public List<ExpensesDTO> getExpensesByOwnerID(int id) {
+	public ExpensesList getExpensesByOwnerID(int id) {
 		Optional<Person> person = personRepository.findById(id);
 		if (person.isEmpty())
-			return Collections.emptyList();
+			return new ExpensesList(Collections.emptyList());
 		int ownerIdentity = person.get().getId();
 		List<ExpensesDTO> expensesDTO = new ArrayList<ExpensesDTO>();
 		for (Expenses e : person.get().getExpenses()) {
@@ -49,7 +50,7 @@ public class ExpensesService {
 			eDTO.setOwnerIdentity(ownerIdentity);
 			expensesDTO.add(eDTO);
 		}
-		return expensesDTO;
+		return new ExpensesList(expensesDTO);
 	}
 
 	@Transactional
