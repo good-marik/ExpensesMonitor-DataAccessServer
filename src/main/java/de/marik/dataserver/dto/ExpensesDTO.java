@@ -3,6 +3,7 @@ package de.marik.dataserver.dto;
 import java.time.LocalDate;
 
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
@@ -19,7 +20,7 @@ public class ExpensesDTO {
 	@PastOrPresent(message = "date cannot be in the future")
 	private LocalDate date;
 
-	@NotNull(message = "some information/notice about expenses should be provided")
+	@NotEmpty(message = "some information/notice about expenses should be provided")
 	@Size(max = 250, message = "notice should not be longer than 250 symbols")
 	private String comment;
 

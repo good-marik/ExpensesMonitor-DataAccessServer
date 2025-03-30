@@ -52,7 +52,7 @@ public class DataServerAPIController {
 		try {
 			expensesService.deleteExpenses(id);
 			return ResponseEntity.ok("Expenses has been deleted succesfully.");
-		} catch (RuntimeException e) {
+		} catch (RuntimeException e) {		//TODO: why? can be skipped and caught below!
 			return ResponseEntity.badRequest().body("Invalid expenses id ");
 		}
 	}
@@ -69,23 +69,20 @@ public class DataServerAPIController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(expenses);
 	}
 	
-	
-	
-	
-	
-	@PostMapping("/addExpenses")
-	public ResponseEntity<HttpStatus> addExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
-			BindingResult bindingResult) {
-		// TODO: work on return type!
-
-		expensesDTOValidator.validate(expensesDTO, bindingResult);
-		if (bindingResult.hasErrors()) {
-			String errorMessage = buildErrorMessage(bindingResult);
-			throw new ExpensesException(errorMessage);
-		}
-		expensesService.saveExpenses(expensesDTO);
-		return ResponseEntity.ok(HttpStatus.OK); // status 200
+	@GetMapping("/expensesById")
+	public ResponseEntity<ExpensesDTO> getExpensesByIdNew(@RequestParam int id) {
+		return ResponseEntity.ok(expensesService.getExpensesById(id));
 	}
+	
+
+	
+	
+//	@GetMapping("/getExpensesById")
+//	public ExpensesDTO getExpensesById(@RequestParam int id) {
+//		return expensesService.getExpensesById(id);
+//	}
+
+	
 	
 	
 
@@ -100,12 +97,7 @@ public class DataServerAPIController {
 		}
 		expensesService.update(expensesDTO);
 	}
-
-	@GetMapping("/getExpensesById")
-	public ExpensesDTO getExpensesById(@RequestParam int id) {
-		return expensesService.getExpensesById(id);
-	}
-
+	
 	private String buildErrorMessage(BindingResult bindingResult) {
 		StringBuilder sb = new StringBuilder();
 		List<FieldError> errors = bindingResult.getFieldErrors();
@@ -114,6 +106,7 @@ public class DataServerAPIController {
 		}
 		return sb.toString();
 	}
+
 
 	@ExceptionHandler
 	private ResponseEntity<ExpensesErrorResponse> handleException(ExpensesException e) {
