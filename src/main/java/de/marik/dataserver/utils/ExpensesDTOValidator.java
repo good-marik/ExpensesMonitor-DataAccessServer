@@ -13,7 +13,6 @@ public class ExpensesDTOValidator implements Validator{
 	
 	private final PersonService personService;
 	
-	@Autowired
 	public ExpensesDTOValidator(PersonService personService) {
 		this.personService = personService;
 	}
@@ -23,7 +22,6 @@ public class ExpensesDTOValidator implements Validator{
 		return ExpensesDTOValidator.class.equals(clazz);
 	}
 	
-
 	@Override
 	public void validate(Object target, Errors errors) {
 		ExpensesDTO expensesDTO = (ExpensesDTO) target;

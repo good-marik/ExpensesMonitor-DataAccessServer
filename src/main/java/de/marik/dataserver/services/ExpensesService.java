@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Optional;
 
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +17,6 @@ import de.marik.dataserver.models.Expenses;
 import de.marik.dataserver.models.Person;
 import de.marik.dataserver.repositories.ExpensesRepository;
 import de.marik.dataserver.repositories.PersonRepository;
-import jakarta.validation.Valid;
 
 @Service
 @Transactional(readOnly = true)
@@ -57,11 +55,14 @@ public class ExpensesService {
 			throw new RuntimeException("No Expenses with id=" + " was found");
 	}
 
-//	@Transactional
-//	public void delete(int id) {
-//		expensesRepository.deleteById(id);
-//		System.out.println("Successfully deleted: " + id);
-//	}
+	@Transactional
+	public Expenses createExpenses(ExpensesDTO expensesDTO) {
+		return expensesRepository.save(convertToExpensesAndEnrich(expensesDTO));
+	}
+	
+	
+	
+	
 
 	@Transactional
 	public void saveExpenses(ExpensesDTO expensesDTO) {
@@ -97,6 +98,14 @@ public class ExpensesService {
 		return expensesDTO;
 	}
 
+	private Expenses convertToExpensesAndEnrich(ExpensesDTO expensesDTO) {
+		Expenses expenses = modelMapper.map(expensesDTO, Expenses.class);
+		Person person = personRepository.findById(expensesDTO.getOwnerIdentity()).get();
+		expenses.setOwner(person);
+		expenses.setAmount(roundToTwoDecimals(expenses.getAmount()));
+		return expenses;
+	}
+	
 	private Expenses convertToExpenses(ExpensesDTO expensesDTO) {
 		return modelMapper.map(expensesDTO, Expenses.class);
 	}
@@ -108,5 +117,6 @@ public class ExpensesService {
 	private double roundToTwoDecimals(double amount) {
 		return new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
+
 
 }

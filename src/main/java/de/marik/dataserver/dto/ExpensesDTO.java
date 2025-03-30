@@ -2,22 +2,25 @@ package de.marik.dataserver.dto;
 
 import java.time.LocalDate;
 
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.DecimalMin;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.PastOrPresent;
 import jakarta.validation.constraints.Size;
 
 public class ExpensesDTO {
 	
 	private int id;
 
-	@DecimalMin(value = "0.0", message = "expenses should be a positive number")
-	private double amount; // or replace with Double?
+	@NotNull(message = "amount should be provided")
+	@DecimalMin(value = "0.0", message = "amount should be a positive number")
+	private Double amount;
 
-	@Temporal(TemporalType.DATE)
+	@NotNull(message = "date should be provided")
+	@PastOrPresent(message = "date cannot be in the future")
 	private LocalDate date;
 
-	@Size(max = 250, message = "too long comment!")
+	@NotNull(message = "some information/notice about expenses should be provided")
+	@Size(max = 250, message = "notice should not be longer than 250 symbols")
 	private String comment;
 
 	private int ownerIdentity;
@@ -25,11 +28,11 @@ public class ExpensesDTO {
 	public ExpensesDTO() {
 	}
 
-	public double getAmount() {
+	public Double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
+	public void setAmount(Double amount) {
 		this.amount = amount;
 	}
 
