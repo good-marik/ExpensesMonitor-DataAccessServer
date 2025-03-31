@@ -21,7 +21,7 @@ public class ExpensesDTO {
 	private LocalDate date;
 
 	@NotEmpty(message = "some information about expenses should be provided")
-	@Size(max = 250, message = "notice should not be longer than 250 symbols")
+	@Size(max = 100, message = "notice should not be longer than 100 symbols")
 	private String comment;
 
 	private int ownerIdentity;

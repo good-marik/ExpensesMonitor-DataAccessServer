@@ -2,7 +2,6 @@ package de.marik.dataserver.controllers;
 
 import java.time.format.DateTimeParseException;
 import java.util.List;
-import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,7 +19,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import de.marik.dataserver.dto.ExpensesDTO;
 import de.marik.dataserver.dto.ExpensesList;
-import de.marik.dataserver.models.Expenses;
 import de.marik.dataserver.services.ExpensesService;
 import de.marik.dataserver.utils.ExpensesDTOValidator;
 import de.marik.dataserver.utils.ExpensesErrorResponse;
@@ -30,7 +28,6 @@ import jakarta.validation.Valid;
 @RequestMapping("/api")
 @RestController
 public class DataServerAPIController {
-
 	private final ExpensesService expensesService;
 	private final ExpensesDTOValidator expensesDTOValidator;
 
@@ -39,37 +36,26 @@ public class DataServerAPIController {
 		this.expensesDTOValidator = expensesDTOValidator;
 	}
 
-	//TODO: change ResponseEntity type
 	@GetMapping("/expenses")
-	public ResponseEntity<Object> getExpenses(@RequestParam int ownerId) {					//TODO: to change the resulting type
-		if (ownerId <= 0)
-			return ResponseEntity.badRequest().body(Map.of("error", "Invalid ownerId "));	//TODO: to remove comppletely?
+	public ResponseEntity<ExpensesList> getExpenses(@RequestParam int ownerId) {
 		ExpensesList expensesList = expensesService.getExpensesByOwnerID(ownerId);
 		return ResponseEntity.ok(expensesList);
 	}
-	
 
 	@DeleteMapping("/delete")
 	public ResponseEntity<String> deleteExpensesNew(@RequestParam int id) {
-		try {
-			expensesService.deleteExpenses(id);
-			return ResponseEntity.ok("Expenses has been deleted succesfully.");
-		} catch (RuntimeException e) { // TODO: why? can be skipped and caught below!
-			return ResponseEntity.badRequest().body("Invalid expenses id ");
-		}
+		expensesService.deleteExpenses(id);
+		return ResponseEntity.ok("Expenses has been deleted succesfully.");
 	}
 
-	//TODO: change ResponseEntity type to ExpensesDTO
 	@PostMapping("/create")
-	public ResponseEntity<Expenses> addExpensesNew(@RequestBody @Valid ExpensesDTO expensesDTO,
+	public ResponseEntity<ExpensesDTO> addExpensesNew(@RequestBody @Valid ExpensesDTO expensesDTO,
 			BindingResult bindingResult) {
 		expensesDTO.setId(0); // ignoring id-field in DTO for new entities, if provided in JSON
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
 		if (bindingResult.hasErrors())
 			throw new ExpensesException(buildErrorMessage(bindingResult));
-		
-		Expenses expenses = expensesService.createExpenses(expensesDTO);
-		return ResponseEntity.status(HttpStatus.CREATED).body(expenses);
+		return ResponseEntity.status(HttpStatus.CREATED).body(expensesService.createExpenses(expensesDTO));
 	}
 
 	@GetMapping("/expensesById")
@@ -77,10 +63,9 @@ public class DataServerAPIController {
 		return ResponseEntity.ok(expensesService.getExpensesById(id));
 	}
 
-	//TODO: change ResponseEntity type to ExpensesDTO
-	//TODO: change to PatchMapping
+	// TODO: change to PatchMapping
 	@PostMapping("/update")
-	public ResponseEntity<Expenses> updateExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
+	public ResponseEntity<ExpensesDTO> updateExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
 			BindingResult bindingResult) {
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
 		if (bindingResult.hasErrors())
