@@ -9,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OrderBy;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 import jakarta.validation.constraints.Size;
@@ -21,16 +22,20 @@ public class Person {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private int id;
 
-	@Size(min = 1, max = 100, message = "Username should be between 1 and 100 symbols long")
+	@Size(min = 1, max = 30, message = "Username should be between 1 and 30 symbols long")
 	private String username;
 
 	@Size(min = 4, max = 100, message = "Password should be at least 4 symbols long")
 	private String password;
 	
+	@Size(min = 1, max = 30, message = "Name should be between 1 and 30 symbols long")
+	private String name;
+	
 	@Transient
 	private String passwordRepeat;
 	
 	@OneToMany(mappedBy = "owner")
+	@OrderBy("date DESC")
 	//@JsonManagedReference	// to prevent looping
 	@JsonBackReference	// to prevent looping
 	private List<Expenses> expenses;
@@ -76,6 +81,15 @@ public class Person {
 
 	public void setExpenses(List<Expenses> expenses) {
 		this.expenses = expenses;
+	}
+	
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

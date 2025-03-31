@@ -32,6 +32,7 @@ public class ExpensesService {
 		this.modelMapper = modelMapper;
 	}
 
+	//TODO: refractoring
 	public ExpensesList getExpensesByOwnerID(int id) {
 		Optional<Person> person = personRepository.findById(id);
 		if (person.isEmpty())
