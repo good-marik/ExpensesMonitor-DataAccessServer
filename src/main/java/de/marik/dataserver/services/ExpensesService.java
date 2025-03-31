@@ -41,7 +41,7 @@ public class ExpensesService {
 		int ownerIdentity = person.get().getId();
 		List<ExpensesDTO> expensesDTO = new ArrayList<ExpensesDTO>();
 		for (Expenses e : person.get().getExpenses()) {
-			ExpensesDTO eDTO = convertToExpensesDTO(e);
+			ExpensesDTO eDTO = convertToExpensesDTO(e); // TODO: replace method!
 			eDTO.setOwnerIdentity(ownerIdentity);
 			expensesDTO.add(eDTO);
 		}
@@ -53,8 +53,8 @@ public class ExpensesService {
 		if (expensesRepository.existsById(id))
 			expensesRepository.deleteById(id);
 		else
-			throw new RuntimeException("No Expenses with id=" + " was found");	//TODO: to test this!
-														// Why RuntimeException and not ExpensesException?
+			throw new RuntimeException("No Expenses with id=" + " was found."); // TODO: to test this!
+		// Why RuntimeException and not ExpensesException?
 	}
 
 	@Transactional
@@ -62,33 +62,28 @@ public class ExpensesService {
 		return expensesRepository.save(convertToExpensesAndEnrich(expensesDTO));
 	}
 
-	
 	public ExpensesDTO getExpensesById(int id) {
 		Optional<Expenses> expenses = expensesRepository.findById(id);
 		if (expenses.isEmpty())
-			throw new ExpensesException("Expenses with id=" + id + " is not found");
+			throw new ExpensesException("Expenses with id=" + id + " is not found.");
 		ExpensesDTO expensesDTO = convertToExpensesDTOAndEnrich(expenses.get());
 		return expensesDTO;
 	}
 
-	
-	
-	
-	
 	@Transactional
-	public void update(ExpensesDTO expensesDTO) {
-		Expenses expenses = convertToExpenses(expensesDTO);
+	public Expenses update(ExpensesDTO expensesDTO) {
+		Expenses expenses = convertToExpensesAndEnrich(expensesDTO);
 		Optional<Expenses> expensesOptional = expensesRepository.findById(expenses.getId());
 		if (expensesOptional.isEmpty())
-			return; // TODO: return a proper Response here!
+			throw new ExpensesException("Expenses with id=" + expenses.getId() + " is not found.");
 		Expenses expensesToBeUpdated = expensesOptional.get();
+		if (expensesToBeUpdated.getOwner() != expenses.getOwner())
+			throw new ExpensesException("The owner id for this expenses is incorrect.");
+		
 		expensesToBeUpdated.setAmount(expenses.getAmount());
 		expensesToBeUpdated.setDate(expenses.getDate());
 		expensesToBeUpdated.setComment(expenses.getComment());
-//		expensesToBeUpdated.setOwner(expenses.getOwner());
-		expensesRepository.save(expensesToBeUpdated);
-		// TODO: return a proper Response here!
-		// return null;
+		return expensesRepository.save(expensesToBeUpdated);
 	}
 
 
@@ -99,17 +94,11 @@ public class ExpensesService {
 		expenses.setAmount(roundToTwoDecimals(expenses.getAmount()));
 		return expenses;
 	}
-	
+
 	private ExpensesDTO convertToExpensesDTOAndEnrich(Expenses expenses) {
-		ExpensesDTO expensesDTO = modelMapper.map(expenses, ExpensesDTO.class); 
+		ExpensesDTO expensesDTO = modelMapper.map(expenses, ExpensesDTO.class);
 		expensesDTO.setOwnerIdentity(expenses.getOwner().getId());
 		return expensesDTO;
-	}
-
-	
-	
-	private Expenses convertToExpenses(ExpensesDTO expensesDTO) {
-		return modelMapper.map(expensesDTO, Expenses.class);
 	}
 
 	private ExpensesDTO convertToExpensesDTO(Expenses expenses) {
@@ -119,6 +108,5 @@ public class ExpensesService {
 	private double roundToTwoDecimals(double amount) {
 		return new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
-
 
 }

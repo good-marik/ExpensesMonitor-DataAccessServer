@@ -20,7 +20,7 @@ public class ExpensesDTO {
 	@PastOrPresent(message = "date cannot be in the future")
 	private LocalDate date;
 
-	@NotEmpty(message = "some information/notice about expenses should be provided")
+	@NotEmpty(message = "some information about expenses should be provided")
 	@Size(max = 250, message = "notice should not be longer than 250 symbols")
 	private String comment;
 

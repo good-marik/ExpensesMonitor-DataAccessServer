@@ -39,65 +39,55 @@ public class DataServerAPIController {
 		this.expensesDTOValidator = expensesDTOValidator;
 	}
 
+	//TODO: change ResponseEntity type
 	@GetMapping("/expenses")
-	public ResponseEntity<Object> getExpenses(@RequestParam int ownerId) {
+	public ResponseEntity<Object> getExpenses(@RequestParam int ownerId) {					//TODO: to change the resulting type
 		if (ownerId <= 0)
-			return ResponseEntity.badRequest().body(Map.of("error", "Invalid ownerId "));
+			return ResponseEntity.badRequest().body(Map.of("error", "Invalid ownerId "));	//TODO: to remove comppletely?
 		ExpensesList expensesList = expensesService.getExpensesByOwnerID(ownerId);
 		return ResponseEntity.ok(expensesList);
 	}
+	
 
 	@DeleteMapping("/delete")
 	public ResponseEntity<String> deleteExpensesNew(@RequestParam int id) {
 		try {
 			expensesService.deleteExpenses(id);
 			return ResponseEntity.ok("Expenses has been deleted succesfully.");
-		} catch (RuntimeException e) {		//TODO: why? can be skipped and caught below!
+		} catch (RuntimeException e) { // TODO: why? can be skipped and caught below!
 			return ResponseEntity.badRequest().body("Invalid expenses id ");
 		}
 	}
-	
+
+	//TODO: change ResponseEntity type to ExpensesDTO
 	@PostMapping("/create")
-	public ResponseEntity<Expenses> addExpensesNew(@RequestBody @Valid ExpensesDTO expensesDTO, BindingResult bindingResult) {
+	public ResponseEntity<Expenses> addExpensesNew(@RequestBody @Valid ExpensesDTO expensesDTO,
+			BindingResult bindingResult) {
 		expensesDTO.setId(0); // ignoring id-field in DTO for new entities, if provided in JSON
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
-		
-		if (bindingResult.hasErrors()) {
+		if (bindingResult.hasErrors())
 			throw new ExpensesException(buildErrorMessage(bindingResult));
-		}
+		
 		Expenses expenses = expensesService.createExpenses(expensesDTO);
 		return ResponseEntity.status(HttpStatus.CREATED).body(expenses);
 	}
-	
+
 	@GetMapping("/expensesById")
 	public ResponseEntity<ExpensesDTO> getExpensesByIdNew(@RequestParam int id) {
 		return ResponseEntity.ok(expensesService.getExpensesById(id));
 	}
-	
 
-	
-	
-//	@GetMapping("/getExpensesById")
-//	public ExpensesDTO getExpensesById(@RequestParam int id) {
-//		return expensesService.getExpensesById(id);
-//	}
-
-	
-	
-	
-
-	@PostMapping("/updateExpenses")
-	public void updateExpenses(@RequestBody @Valid ExpensesDTO expensesDTO, BindingResult bindingResult) {
-
-		// dublicating addExpenses() - not good
+	//TODO: change ResponseEntity type to ExpensesDTO
+	//TODO: change to PatchMapping
+	@PostMapping("/update")
+	public ResponseEntity<Expenses> updateExpenses(@RequestBody @Valid ExpensesDTO expensesDTO,
+			BindingResult bindingResult) {
 		expensesDTOValidator.validate(expensesDTO, bindingResult);
-		if (bindingResult.hasErrors()) {
-			String errorMessage = buildErrorMessage(bindingResult);
-			throw new ExpensesException(errorMessage);
-		}
-		expensesService.update(expensesDTO);
+		if (bindingResult.hasErrors())
+			throw new ExpensesException(buildErrorMessage(bindingResult));
+		return ResponseEntity.ok(expensesService.update(expensesDTO));
 	}
-	
+
 	private String buildErrorMessage(BindingResult bindingResult) {
 		StringBuilder sb = new StringBuilder();
 		List<FieldError> errors = bindingResult.getFieldErrors();
@@ -107,24 +97,22 @@ public class DataServerAPIController {
 		return sb.toString();
 	}
 
-
 	@ExceptionHandler
 	private ResponseEntity<ExpensesErrorResponse> handleException(ExpensesException e) {
 		ExpensesErrorResponse response = new ExpensesErrorResponse(e.getMessage());
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler
 	private ResponseEntity<ExpensesErrorResponse> handleException(DateTimeParseException e) {
 		ExpensesErrorResponse response = new ExpensesErrorResponse(e.getMessage() + "; required format: YYYY-MM-DD");
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@ExceptionHandler
 	private ResponseEntity<ExpensesErrorResponse> handleException(HttpMessageNotReadableException e) {
 		ExpensesErrorResponse response = new ExpensesErrorResponse(e.getMessage());
 		return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
 	}
-	
 
 }
