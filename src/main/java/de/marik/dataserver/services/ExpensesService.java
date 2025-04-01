@@ -100,10 +100,6 @@ public class ExpensesService {
 		return expensesDTO;
 	}
 
-//	private ExpensesDTO convertToExpensesDTO(Expenses expenses) {
-//		return modelMapper.map(expenses, ExpensesDTO.class);
-//	}
-
 	private double roundToTwoDecimals(double amount) {
 		return new BigDecimal(amount).setScale(2, RoundingMode.HALF_UP).doubleValue();
 	}
