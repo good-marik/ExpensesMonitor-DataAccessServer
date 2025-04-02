@@ -1,6 +1,6 @@
 spring:
   application:
-   name: APIGateway
+   name: APIExpenses
  
 #Data source configuration
   datasource:
@@ -21,9 +21,12 @@ spring:
       filter:
          enabled: true
 
-#debugging here
-
-testVariable: MariksVariable 
+#actuator for health check
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
 
 server:
     port: 8000    
